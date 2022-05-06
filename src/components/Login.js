@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 const inputStyle = {
@@ -8,13 +9,27 @@ const inputStyle = {
 }
 
 const Login = () => {
-
+    const navigate = useNavigate();
     const handleLogin = event => {
         event.preventDefault();
         const email = event.target.email.value;
         const password = event.target.password.value;
 
-        console.log(email, password);
+        fetch('http://localhost:5000/login', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({email, password})
+        })
+        .then(res => res.json())
+        .then(data =>{
+            if(data.success){
+                localStorage.setItem('accessToken', data.accessToken);
+                navigate('/orders');
+            }
+            console.log(data);
+        })
     }
 
     return (
